@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Liste des articles</title>
+</head>
+<body>
+    <h1>Articles du blog</h1>
+    <ul>
+        {% for post in posts %}
+            <li>{{ post.title }} - {{ post.created_at }} <p> {{post.content}} </p></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
