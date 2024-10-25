@@ -100,6 +100,14 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
+class TaskListByProject(generics.ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = TaskSerializer
+
+    def get_queryset(self):
+        project_id = self.kwargs['project_id']
+        return Task.objects.filter(project_id=project_id)
+
 
 from rest_framework.permissions import AllowAny
 from rest_framework import status
