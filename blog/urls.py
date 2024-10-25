@@ -10,10 +10,12 @@ from .views import (
     ProjectDetail, 
     TaskList, 
     TaskDetail,
-    TaskListByProject
+    TaskListByProject,
+    DuplicateTaskView,
 )
 from blog.views import PostList, PostDetail, UserListCreate, UserDetail
 from rest_framework_simplejwt.views import TokenRefreshView
+
 
 urlpatterns = [
     # Page d'accueil
@@ -41,8 +43,10 @@ urlpatterns = [
 
     # Tâches
     path('tasks/', TaskList.as_view(), name='task-list'),
-    path('tasks/<int:pk>/', TaskDetail.as_view(), name='task-detail'),
+    path('tasks/<uuid:pk>/', TaskDetail.as_view(), name='task-detail'),
     path('projects/<uuid:project_id>/tasks/', TaskListByProject.as_view(), name='tasks-by-project'),
+    path('tasks/<uuid:task_id>/duplicate/', DuplicateTaskView.as_view(), name='duplicate-task'),
+
 
     # Authentification
     path('register/', RegisterView.as_view(), name='register'),

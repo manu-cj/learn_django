@@ -87,8 +87,15 @@ class Task(models.Model):  # Renommé Tasks -> Task pour respecter les conventio
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE, 
+        null=True, 
+        blank=True, 
+        related_name='subtasks'
+    )
     project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
-    name = models.CharField(max_length=150, unique=True)
+    name = models.CharField(max_length=150)
     description = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)

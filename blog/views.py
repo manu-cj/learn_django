@@ -108,6 +108,47 @@ class TaskListByProject(generics.ListAPIView):
         project_id = self.kwargs['project_id']
         return Task.objects.filter(project_id=project_id)
 
+from datetime import timedelta
+
+class DuplicateTaskView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = TaskSerializer
+
+    def post(self, request, *args, **kwargs):
+        task_id = kwargs['task_id']
+        task = Task.objects.get(id=task_id)
+
+        # Vérifier que la tâche a bien une date de début et de fin
+        if not task.end_date or not task.start_date:
+            return Response({"error": "La tâche doit avoir une date de début et de fin."}, status=400)
+
+        # Calculer la durée totale de la tâche
+        duration = (task.end_date - task.start_date).days
+
+        # Vérifier que la durée est positive
+        if duration <= 0:
+            return Response({"error": "La durée de la tâche doit être positive."}, status=400)
+
+
+        # Créer une nouvelle tâche dupliquée
+        duplicated_task = Task(
+            project=task.project,
+            name=task.name,
+            description=task.description,
+            start_date=task.start_date + timedelta(days=duration // 2),  # Même date de début que la tâche d'origine
+            end_date=task.end_date,  # Fin à la moitié de la durée de la tâche d'origine
+            status=task.status,
+            priority=task.priority
+        )
+        duplicated_task.save()  # Sauvegarder la tâche dupliquée dans la base de données
+
+        # Mettre à jour la tâche d'origine pour finir à la moitié de sa durée initiale
+        task.end_date = task_end_date = task.start_date + timedelta(days=duration // 2)  # Mise à jour de la tâche d'origine
+        task.save()
+
+        # Sérialiser et retourner la tâche dupliquée
+        duplicated_task_serializer = TaskSerializer(duplicated_task)
+        return Response(duplicated_task_serializer.data, status=201)
 
 from rest_framework.permissions import AllowAny
 from rest_framework import status
