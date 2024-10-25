@@ -23,6 +23,7 @@ from blog.views import PostList, PostDetail
 from blog.views import UserListCreate, UserDetail
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('blog.urls')),
