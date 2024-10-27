@@ -103,7 +103,7 @@ class Task(models.Model):  # Renommé Tasks -> Task pour respecter les conventio
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default='medium')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    part = models.IntegerField(default=1, null=True, blank=True)
     def clean(self):
         # Vérifiez que start_date n'est pas supérieure à end_date
         if self.end_date and self.start_date > self.end_date:

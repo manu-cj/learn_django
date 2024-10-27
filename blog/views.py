@@ -133,17 +133,19 @@ class DuplicateTaskView(generics.CreateAPIView):
         # Créer une nouvelle tâche dupliquée
         duplicated_task = Task(
             project=task.project,
-            name=task.name,
+            name=task.name +  " part " + str(task.part + 1),
             description=task.description,
             start_date=task.start_date + timedelta(days=duration // 2),  # Même date de début que la tâche d'origine
             end_date=task.end_date,  # Fin à la moitié de la durée de la tâche d'origine
             status=task.status,
-            priority=task.priority
+            priority=task.priority,
+            part=task.part + 1
         )
-        duplicated_task.save()  # Sauvegarder la tâche dupliquée dans la base de données
+        duplicated_task.save()
 
-        # Mettre à jour la tâche d'origine pour finir à la moitié de sa durée initiale
-        task.end_date = task_end_date = task.start_date + timedelta(days=duration // 2)  # Mise à jour de la tâche d'origine
+        # Mettre à jour la tâche d'origine
+        task.end_date = task_end_date = task.start_date + timedelta(days=duration // 2)  
+        task.part = task.part + 1
         task.save()
 
         # Sérialiser et retourner la tâche dupliquée
